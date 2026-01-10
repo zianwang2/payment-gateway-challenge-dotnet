@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
+using PaymentGateway.Api.Models.Exceptions;
 using PaymentGateway.Api.Models.Mapping;
 using PaymentGateway.Api.Models.Requests;
 using PaymentGateway.Api.Models.Responses;
@@ -12,10 +13,12 @@ namespace PaymentGateway.Api.Controllers;
 public class PaymentsController : Controller
 {
     private readonly PaymentsRepository _paymentsRepository;
+    private readonly IBankServiceClient _bankServiceClient;
 
-    public PaymentsController(PaymentsRepository paymentsRepository)
+    public PaymentsController(PaymentsRepository paymentsRepository, IBankServiceClient bankServiceClient)
     {
         _paymentsRepository = paymentsRepository;
+        _bankServiceClient = bankServiceClient;
     }
 
     [HttpGet("{id:guid}")]
@@ -33,10 +36,20 @@ public class PaymentsController : Controller
     [HttpPost]
     public async Task<ActionResult<PostPaymentResponse>> PostPaymentAsync([FromBody] PostPaymentRequest request)
     {
-        var payment = new PostPaymentResponse
+        try
         {
-            Id = Guid.NewGuid()
-        };
-        return Ok(payment);
+            var result = await _bankServiceClient.ProcessPaymentAsync(request.ToProcessPaymentRequestModel());
+            var paymentData = result.ToPaymentDataModel(request);
+            _paymentsRepository.Add(paymentData);
+            var payment = paymentData.ToPostPaymentResponseModel();
+            return Ok(payment);
+        }
+        catch (ProviderException ex)
+        {
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                new { ErrorMessage = ex.Message });
+        }
+
     }
 }

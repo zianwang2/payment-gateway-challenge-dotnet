@@ -37,6 +37,13 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     };
 });
 
+builder.Services.AddHttpClient<IBankServiceClient, BankServiceClient>(
+    client =>
+    {
+        client.BaseAddress = new Uri("http://localhost:8080");
+        client.Timeout = TimeSpan.FromSeconds(10);
+    });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

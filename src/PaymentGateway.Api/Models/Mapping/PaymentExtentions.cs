@@ -1,4 +1,5 @@
 ﻿using PaymentGateway.Api.Models.Repository;
+using PaymentGateway.Api.Models.Requests;
 using PaymentGateway.Api.Models.Responses;
 
 namespace PaymentGateway.Api.Models.Mapping
@@ -11,7 +12,7 @@ namespace PaymentGateway.Api.Models.Mapping
             {
                 Id = paymentData.Id,
                 Status = paymentData.Status,
-                CardNumberLastFour = paymentData.CardNumber,
+                CardNumberLastFour = paymentData.CardNumber[^4..],
                 ExpiryMonth = paymentData.ExpiryMonth,
                 ExpiryYear = paymentData.ExpiryYear,
                 Currency = paymentData.Currency,
@@ -25,12 +26,40 @@ namespace PaymentGateway.Api.Models.Mapping
             {
                 Id = paymentData.Id,
                 Status = paymentData.Status,
-                CardNumberLastFour = paymentData.CardNumber,
+                CardNumberLastFour = paymentData.CardNumber[^4..],
                 ExpiryMonth = paymentData.ExpiryMonth,
                 ExpiryYear = paymentData.ExpiryYear,
                 Currency = paymentData.Currency,
                 Amount = paymentData.Amount
             };
         }
+
+        public static ProcessPaymentRequest ToProcessPaymentRequestModel(this PostPaymentRequest postPaymentRequest)
+        {
+            return new ProcessPaymentRequest
+            {
+                CardNumber = postPaymentRequest.CardNumber,
+                ExpiryDate = $"{postPaymentRequest.ExpiryMonth:D2}/{postPaymentRequest.ExpiryYear}",
+                Currency = postPaymentRequest.Currency,
+                Amount = postPaymentRequest.Amount,
+                Cvv = postPaymentRequest.Cvv
+            };
+        }
+
+        public static PaymentData ToPaymentDataModel(this ProcessPaymentResponse processPaymentResponse, PostPaymentRequest postPaymentRequest)
+        {
+            return new PaymentData
+            {
+                Id = Guid.NewGuid(),
+                Status = processPaymentResponse.Authorized ? PaymentStatus.Authorized : PaymentStatus.Declined,
+                CardNumber = postPaymentRequest.CardNumber,
+                ExpiryMonth = postPaymentRequest.ExpiryMonth,
+                ExpiryYear = postPaymentRequest.ExpiryYear,
+                Currency = postPaymentRequest.Currency,
+                Amount = postPaymentRequest.Amount,
+                AuthorizationCode = processPaymentResponse.AuthorizationCode
+            };
+        }
     }
 }
+

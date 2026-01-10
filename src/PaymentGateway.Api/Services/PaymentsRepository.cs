@@ -1,7 +1,4 @@
 ﻿using PaymentGateway.Api.Models.Repository;
-using PaymentGateway.Api.Models.Responses;
-using PaymentGateway.Api.Models.Mapping;
-
 namespace PaymentGateway.Api.Services;
 
 public class PaymentsRepository
