@@ -1,3 +1,7 @@
+using Microsoft.AspNetCore.Mvc;
+
+using PaymentGateway.Api.Models;
+using PaymentGateway.Api.Models.Responses;
 using PaymentGateway.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +14,28 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<PaymentsRepository>();
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var errors = context.ModelState.Select(x => 
+            {
+                var key = x.Key;
+                var errorMessage = string.Join(",", x.Value.Errors.Select(e => e.ErrorMessage));
+                return $"{key}: {errorMessage}.";
+            });
+
+        var response = new PostPaymentResponse
+        {
+            Id = Guid.NewGuid(),
+            Status = PaymentStatus.Rejected,
+            ErrorMessage = string.Join(" ", errors)
+        };
+
+        return new BadRequestObjectResult(response);
+    };
+});
 
 var app = builder.Build();
 
