@@ -11,7 +11,7 @@ namespace PaymentGateway.Api.Models.Mapping
             {
                 Id = paymentData.Id,
                 Status = paymentData.Status,
-                CardNumberLastFour = paymentData.CardNumberLastFour,
+                CardNumberLastFour = paymentData.CardNumber,
                 ExpiryMonth = paymentData.ExpiryMonth,
                 ExpiryYear = paymentData.ExpiryYear,
                 Currency = paymentData.Currency,
@@ -25,7 +25,7 @@ namespace PaymentGateway.Api.Models.Mapping
             {
                 Id = paymentData.Id,
                 Status = paymentData.Status,
-                CardNumberLastFour = paymentData.CardNumberLastFour,
+                CardNumberLastFour = paymentData.CardNumber,
                 ExpiryMonth = paymentData.ExpiryMonth,
                 ExpiryYear = paymentData.ExpiryYear,
                 Currency = paymentData.Currency,
