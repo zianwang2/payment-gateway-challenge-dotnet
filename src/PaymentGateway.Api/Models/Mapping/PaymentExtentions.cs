@@ -12,7 +12,7 @@ namespace PaymentGateway.Api.Models.Mapping
             {
                 Id = paymentData.Id,
                 Status = paymentData.Status,
-                CardNumberLastFour = paymentData.CardNumber[^4..],
+                CardNumberLastFour = paymentData.CardNumberLastFour,
                 ExpiryMonth = paymentData.ExpiryMonth,
                 ExpiryYear = paymentData.ExpiryYear,
                 Currency = paymentData.Currency,
@@ -26,7 +26,7 @@ namespace PaymentGateway.Api.Models.Mapping
             {
                 Id = paymentData.Id,
                 Status = paymentData.Status,
-                CardNumberLastFour = paymentData.CardNumber[^4..],
+                CardNumberLastFour = paymentData.CardNumberLastFour,
                 ExpiryMonth = paymentData.ExpiryMonth,
                 ExpiryYear = paymentData.ExpiryYear,
                 Currency = paymentData.Currency,
@@ -52,12 +52,11 @@ namespace PaymentGateway.Api.Models.Mapping
             {
                 Id = Guid.NewGuid(),
                 Status = processPaymentResponse.Authorized ? PaymentStatus.Authorized : PaymentStatus.Declined,
-                CardNumber = postPaymentRequest.CardNumber,
+                CardNumberLastFour = postPaymentRequest.CardNumber[^4..],
                 ExpiryMonth = postPaymentRequest.ExpiryMonth,
                 ExpiryYear = postPaymentRequest.ExpiryYear,
                 Currency = postPaymentRequest.Currency,
-                Amount = postPaymentRequest.Amount,
-                AuthorizationCode = processPaymentResponse.AuthorizationCode
+                Amount = postPaymentRequest.Amount
             };
         }
     }
