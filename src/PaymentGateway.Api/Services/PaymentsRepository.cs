@@ -1,6 +1,9 @@
 ﻿using PaymentGateway.Api.Models.Repository;
 namespace PaymentGateway.Api.Services;
 
+/// <summary>
+/// Test repository for storing payment data.
+/// </summary>
 public class PaymentsRepository
 {
     public List<PaymentData> Payments = new();

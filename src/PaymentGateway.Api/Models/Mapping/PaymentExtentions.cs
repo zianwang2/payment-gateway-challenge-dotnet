@@ -4,6 +4,9 @@ using PaymentGateway.Api.Models.Responses;
 
 namespace PaymentGateway.Api.Models.Mapping
 {
+    /**
+     * Extension methods for mapping between different payment models.
+     */
     public static class PaymentExtentions
     {
         public static GetPaymentResponse ToGetPaymentResponseModel(this PaymentData paymentData)
@@ -55,7 +58,7 @@ namespace PaymentGateway.Api.Models.Mapping
                 CardNumberLastFour = postPaymentRequest.CardNumber[^4..],
                 ExpiryMonth = postPaymentRequest.ExpiryMonth,
                 ExpiryYear = postPaymentRequest.ExpiryYear,
-                Currency = postPaymentRequest.Currency,
+                Currency = postPaymentRequest.Currency.ToUpper(),
                 Amount = postPaymentRequest.Amount
             };
         }
