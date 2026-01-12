@@ -4,7 +4,7 @@ namespace PaymentGateway.Api.Services;
 /// <summary>
 /// Test repository for storing payment data.
 /// </summary>
-public class PaymentsRepository
+public class PaymentsRepository: IPaymentsRepository
 {
     public List<PaymentData> Payments = new();
     

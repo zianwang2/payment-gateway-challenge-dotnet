@@ -21,7 +21,7 @@ public class BankServiceClient : IBankServiceClient
 
     public async Task<ProcessPaymentResponse> ProcessPaymentAsync(ProcessPaymentRequest request)
     {
-        _logger.LogInformation("Sending payment request to provider. Path={Path} CardLast4={CardLast4}", processPaymentPath, request.CardNumber[^4..]);
+        _logger.LogInformation("Sending payment request to provider. Path={Path} CardNumberLastFour={CardNumberLastFour}", processPaymentPath, request.CardNumber[^4..]);
 
         HttpResponseMessage response;
         try
@@ -51,13 +51,7 @@ public class BankServiceClient : IBankServiceClient
             throw new ProviderException("Invalid response from provider");
         }
 
-        if (result == null)
-        {
-            _logger.LogError("Provider response deserialized to null");
-            throw new ProviderException("Invalid response from provider");
-        }
-
-        _logger.LogInformation("Provider processed payment. Authorized={Authorized} HasAuthCode={HasAuthCode}", result.Authorized, !string.IsNullOrEmpty(result.AuthorizationCode));
+        _logger.LogInformation("Provider processed payment. Authorized={Authorized}", result.Authorized);
 
         return result;
     }

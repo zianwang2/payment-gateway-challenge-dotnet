@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+
 using PaymentGateway.Api.Models.Exceptions;
 using PaymentGateway.Api.Models.Mapping;
+using PaymentGateway.Api.Models.Repository;
 using PaymentGateway.Api.Models.Requests;
 using PaymentGateway.Api.Models.Responses;
 using PaymentGateway.Api.Services;
-using PaymentGateway.Api.Models.Repository;
 
 namespace PaymentGateway.Api.Controllers;
 
@@ -12,11 +13,11 @@ namespace PaymentGateway.Api.Controllers;
 [ApiController]
 public class PaymentsController : Controller
 {
-    private readonly PaymentsRepository _paymentsRepository;
+    private readonly IPaymentsRepository _paymentsRepository;
     private readonly IBankServiceClient _bankServiceClient;
     private readonly ILogger<PaymentsController> _logger;
 
-    public PaymentsController( PaymentsRepository paymentsRepository, IBankServiceClient bankServiceClient, ILogger<PaymentsController> logger)
+    public PaymentsController(IPaymentsRepository paymentsRepository, IBankServiceClient bankServiceClient, ILogger<PaymentsController> logger)
     {
         _paymentsRepository = paymentsRepository;
         _bankServiceClient = bankServiceClient;
@@ -31,7 +32,7 @@ public class PaymentsController : Controller
         if (payment == null)
         {
             _logger.LogInformation("Payment not found. RequestId={RequestId} PaymentId={PaymentId}", HttpContext.TraceIdentifier, id);
-            return NotFound();
+            return NotFound(new {ErrorMessage = $"Payment not found. PaymentId={id}" });
         }
 
         _logger.LogInformation("Payment found. RequestId={RequestId} PaymentId={PaymentId} Status={Status}", HttpContext.TraceIdentifier, id, payment.Status);
